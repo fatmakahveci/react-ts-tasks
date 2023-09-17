@@ -23,7 +23,7 @@ const Home = ({ }): JSX.Element => {
         throw new Error('Request failed!');
       }
 
-      const data = await response.json();
+      const data: Record<string, string>[] = await response.json();
 
       const loadedTasks: any = [];
 

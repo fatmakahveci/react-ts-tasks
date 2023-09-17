@@ -2,7 +2,6 @@
 
 import { InputProps } from '@/shared/types';
 import { FC, forwardRef } from 'react';
-import './Input.css';
 
 const Input: FC<InputProps> = forwardRef(({label, input}, ref) => {
   return (
