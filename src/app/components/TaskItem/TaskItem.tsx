@@ -1,8 +1,12 @@
+'use client';
+
+import { ChildrenProps } from '@/shared/types';
+import { FC } from 'react';
 import './TaskItem.css';
 
-const TaskItem = (props: any) => {
+const TaskItem: FC<ChildrenProps> = ({ children }): JSX.Element => {
   return (
-    <li className="task">{props.children}</li>
+    <li className="task">{children}</li>
   );
 };
 

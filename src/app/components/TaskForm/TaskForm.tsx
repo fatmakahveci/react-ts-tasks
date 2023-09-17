@@ -1,25 +1,36 @@
 'use client';
 
-import { useRef } from 'react';
+import { FC, FormEvent, useRef } from 'react';
 import './TaskForm.css';
+import Input from '@/app/components/UI/Input/Input';
+import { TaskFormProps } from '@/shared/types';
 
-const TaskForm = (props: any) => {
-  const taskInputRef = useRef();
+const TaskForm: FC<TaskFormProps> = ({ loading, onEnterTask }) => {
+  const taskInputRef = useRef<HTMLInputElement | null>(null);
 
-  const submitHandler = (event: any) => {
-    event.preventDefault();
+  const submitHandler = (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
 
-    // const enteredValue = taskInputRef.current.value;
+    if (!taskInputRef.current) throw new Error("Task is required");
 
-    // if (enteredValue.trim().length > 0) {
-    //   props.onEnterTask(enteredValue);
-    // }
+    const enteredValue: string = taskInputRef.current.value;
+
+    if (enteredValue.trim().length > 0) {
+      onEnterTask(enteredValue);
+    }
   };
 
   return (
     <form className="form" onSubmit={submitHandler}>
-      {/* <input type='text' ref={taskInputRef} /> */}
-      <button>{props.loading ? 'Sending...' : 'Add Task'}</button>
+      <Input
+        label=""
+        input={{
+          id: '',
+          type: 'text',
+        }}
+        ref={taskInputRef}
+      />
+      <button>{loading ? 'Sending...' : 'Add Task'}</button>
     </form>
   );
 };

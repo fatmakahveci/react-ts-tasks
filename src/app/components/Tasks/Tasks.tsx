@@ -1,30 +1,32 @@
 'use client';
 
-import Section from '@/app/components/UI/Section/Section';
 import TaskItem from '@/app/components/TaskItem/TaskItem';
+import Section from '@/app/components/UI/Section/Section';
+import { Task, TasksProps } from '@/shared/types';
+import { FC } from 'react';
 import './Tasks.css';
 
-const Tasks = (props: any) => {
+const Tasks: FC<TasksProps> = ({ items, error, loading, onFetch }) => {
   let taskList = <h2>No tasks found. Start adding some!</h2>;
 
-  if (props.items.length > 0) {
+  if (items.length > 0) {
     taskList = (
       <ul>
-        {/* {props.items.map((task) => (
+        {items.map((task: Task) => (
           <TaskItem key={task.id}>{task.text}</TaskItem>
-        ))} */}
+        ))}
       </ul>
     );
   }
 
-  let content = taskList;
+  let content: any = taskList;
 
-  if (props.error) {
-    content = <button onClick={props.onFetch}>Try again</button>;
+  if (error) {
+    content = <button onClick={onFetch}>Try again</button>;
   }
 
-  if (props.loading) {
-    // content = 'Loading tasks...';
+  if (loading) {
+    content = 'Loading tasks...';
   }
 
   return (

@@ -1,20 +1,21 @@
 'use client';
 
-import { useState } from 'react';
 import TaskForm from '@/app/components/TaskForm/TaskForm';
 import Section from '@/app/components/UI/Section/Section';
-import './NewTask.css';
+import { NewsTasksProps, Task } from '@/shared/types';
+import { FC, useState, ReactNode } from 'react';
+import './NewTasks.css';
 
-const NewTask = (props: any) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+const NewTask: FC<NewsTasksProps> = ({ onAddTask }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<ReactNode>(null);
 
-  const enterTaskHandler = async (taskText: any) => {
+  const enterTaskHandler = async (taskText: string): Promise<void> => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        'https://react-http-6b4a6.firebaseio.com/tasks.json',
+      const response: Response = await fetch(
+        'https://react-ts-tasks-e42eb-default-rtdb.firebaseio.com/tasks.json',
         {
           method: 'POST',
           body: JSON.stringify({ text: taskText }),
@@ -28,12 +29,12 @@ const NewTask = (props: any) => {
         throw new Error('Request failed!');
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
 
-      const generatedId = data.name; // firebase-specific => "name" contains generated id
-      const createdTask = { id: generatedId, text: taskText };
+      const generatedId: string = data.name;
+      const createdTask: Task = { id: generatedId, text: taskText };
 
-      props.onAddTask(createdTask);
+      onAddTask(createdTask);
     } catch (err: any) {
       setError(err.message || 'Something went wrong!');
     }

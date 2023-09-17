@@ -7,8 +7,8 @@ import NewTask from '@/app/components/NewTasks/NewTasks';
 import './globals.css';
 
 const Home = ({ }): JSX.Element => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
   const [tasks, setTasks] = useState([]);
 
   const fetchTasks = async (taskText: any) => {
@@ -16,7 +16,7 @@ const Home = ({ }): JSX.Element => {
     setError(null);
     try {
       const response = await fetch(
-        'https://react-http-6b4a6.firebaseio.com/tasks.json'
+        'https://react-ts-tasks-e42eb-default-rtdb.firebaseio.com/tasks.json'
       );
 
       if (!response.ok) {

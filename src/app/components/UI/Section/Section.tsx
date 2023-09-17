@@ -1,10 +1,14 @@
 'use client';
 
+import { ChildrenProps } from '@/shared/types';
+import { FC } from 'react';
 import './Section.css';
 
-const Section = (props: any): JSX.Element => {
+const Section: FC<ChildrenProps> = ({ children }): JSX.Element => {
   return (
-    <section className="section">{props.children}</section>
+    <section className="section">
+      {children}
+    </section>
   );
 };
 
