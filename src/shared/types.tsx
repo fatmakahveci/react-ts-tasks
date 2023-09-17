@@ -17,6 +17,13 @@ export type NewsTasksProps = {
     onAddTask: (task: Task) => void;
 };
 
+export type RequestConfig = {
+    url: string;
+    method?: string;
+    headers?: Record<string, string>;
+    body?: any;
+};
+
 export type Task = {
     id: string;
     text: string;
@@ -32,4 +39,10 @@ export type TasksProps = {
     items: Task[];
     loading: boolean;
     onFetch: any;
+};
+
+export type UseHttpReturnType = {
+    isLoading: boolean;
+    error: Error | null;
+    sendRequest: (config: RequestConfig, applyData: (data: Record<string, string>[]) => void) => Promise<void>;
 };

@@ -1,43 +1,34 @@
-"use client";
+'use client';
 
-
-import React, { useEffect, useState } from 'react';
-import Tasks from '@/app/components/Tasks/Tasks';
 import NewTask from '@/app/components/NewTasks/NewTasks';
+import Tasks from '@/app/components/Tasks/Tasks';
+import { Task, UseHttpReturnType } from '@/shared/types';
+import { useEffect, useState } from 'react';
 import './globals.css';
+import useHttp from './hooks/use-http';
 
-const Home = ({ }): JSX.Element => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [tasks, setTasks] = useState([]);
+const Home = (): JSX.Element => {
+  const [tasks, setTasks] = useState<Task[]>([]);
 
-  const fetchTasks = async (taskText: any) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(
-        'https://react-ts-tasks-e42eb-default-rtdb.firebaseio.com/tasks.json'
-      );
-      if (!response.ok) throw new Error('Request failed!');
-
-      const loadedTasks: any = [];
-      const data: Record<string, string>[] = await response.json();
-      for (const taskKey in data) {
-        loadedTasks.push({ id: taskKey, text: data[taskKey].text });
-      }
-      setTasks(loadedTasks);
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong!');
-    }
-    setIsLoading(false);
-  };
+  const { isLoading, error, sendRequest: fetchTasks }: UseHttpReturnType = useHttp();
 
   useEffect(() => {
-    fetchTasks({});
-  }, []);
+    const transformTasks = (tasksObj: Record<string, any>): void => {
+      const loadedTasks: Task[] = [];
+      for (const taskKey in tasksObj) {
+        loadedTasks.push({id: taskKey, text: tasksObj[taskKey].text});
+      }
+      setTasks(loadedTasks);
+    };
+  
+    fetchTasks(
+      {url: 'https://react-ts-tasks-e42eb-default-rtdb.firebaseio.com/tasks.json'},
+      transformTasks
+    );
+  }, [fetchTasks]);
 
-  const taskAddHandler = (task: any) => {
-    setTasks((prevTasks) => prevTasks.concat(task));
+  const taskAddHandler = (task: Task): void => {
+    setTasks((prevTasks) => [...prevTasks, task]);
   };
 
   return (
