@@ -18,19 +18,13 @@ const Home = ({ }): JSX.Element => {
       const response = await fetch(
         'https://react-ts-tasks-e42eb-default-rtdb.firebaseio.com/tasks.json'
       );
-
-      if (!response.ok) {
-        throw new Error('Request failed!');
-      }
-
-      const data: Record<string, string>[] = await response.json();
+      if (!response.ok) throw new Error('Request failed!');
 
       const loadedTasks: any = [];
-
+      const data: Record<string, string>[] = await response.json();
       for (const taskKey in data) {
         loadedTasks.push({ id: taskKey, text: data[taskKey].text });
       }
-
       setTasks(loadedTasks);
     } catch (err: any) {
       setError(err.message || 'Something went wrong!');
@@ -39,7 +33,7 @@ const Home = ({ }): JSX.Element => {
   };
 
   useEffect(() => {
-    // fetchTasks();
+    fetchTasks({});
   }, []);
 
   const taskAddHandler = (task: any) => {

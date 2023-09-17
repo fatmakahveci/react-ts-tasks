@@ -14,7 +14,6 @@ const TaskForm: FC<TaskFormProps> = ({ loading, onEnterTask }) => {
     if (!taskInputRef.current) throw new Error("Task is required");
 
     const enteredValue: string = taskInputRef.current.value;
-
     if (enteredValue.trim().length > 0) {
       onEnterTask(enteredValue);
     }
