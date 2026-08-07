@@ -16,7 +16,7 @@ const REQUEST_TIMEOUT_MS = 10_000;
 
 if (!TASKS_URL.endsWith('/tasks.json')) {
   throw new Error(
-    'NEXT_PUBLIC_FIREBASE_TASKS_URL geçerli bir Firebase tasks.json adresi olmalıdır.',
+    'NEXT_PUBLIC_FIREBASE_TASKS_URL must be a valid Firebase tasks.json URL.',
   );
 }
 
@@ -34,13 +34,13 @@ const request = async (url: string, init?: RequestInit): Promise<unknown> => {
     response = await fetch(url, { ...init, signal });
   } catch (error) {
     if (timeoutSignal.aborted && !init?.signal?.aborted) {
-      throw new Error('Sunucu zamanında yanıt vermedi. Lütfen tekrar deneyin.');
+      throw new Error('The server timed out. Please try again.');
     }
     throw error;
   }
 
   if (!response.ok) {
-    throw new Error(`Sunucu isteği başarısız oldu (${response.status}).`);
+    throw new Error(`The server request failed (${response.status}).`);
   }
 
   const data: unknown = await response.json();

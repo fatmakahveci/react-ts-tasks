@@ -1,9 +1,9 @@
-# Odak — React & TypeScript Görev Uygulaması
+# Focus — React & TypeScript Task App
 
-Next.js, React ve TypeScript ile geliştirilmiş; Firebase Realtime Database kullanan
-sade bir görev takip uygulaması.
+A simple task management application built with Next.js, React, and TypeScript,
+using Firebase Realtime Database for persistence.
 
-## Çalıştırma
+## Getting started
 
 ```bash
 npm install
@@ -11,20 +11,20 @@ cp .env.example .env.local
 npm run dev
 ```
 
-`.env.local` içindeki adresi kendi Firebase Realtime Database adresinizle değiştirin.
-Adres `tasks.json` ile bitmelidir.
+Replace the URL in `.env.local` with your Firebase Realtime Database URL.
+The URL must end with `tasks.json`.
 
-## Özellikler
+## Features
 
-- Görev ekleme, tamamlama ve silme
-- Yükleme, hata, doğrulama ve boş liste durumları
-- Mobil uyumlu arayüz
-- Firebase verileri için tip güvenli dönüşüm
+- Add, complete, and delete tasks
+- Loading, error, validation, and empty-list states
+- Responsive interface
+- Type-safe Firebase data parsing
 
-## Kalite kontrolleri
+## Quality checks
 
 ```bash
 npm run check
 ```
 
-Bu komut sırasıyla lint, birim testleri ve üretim derlemesini çalıştırır.
+This command runs linting, unit tests, and the production build in sequence.

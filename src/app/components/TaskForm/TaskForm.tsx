@@ -24,7 +24,7 @@ const TaskForm = ({ isSubmitting, onSubmitTask }: TaskFormProps) => {
       normalizedText = normalizeTaskText(taskText);
     } catch (error) {
       setValidationError(
-        error instanceof Error ? error.message : 'Geçersiz görev metni.',
+        error instanceof Error ? error.message : 'Invalid task text.',
       );
       return;
     }
@@ -41,12 +41,12 @@ const TaskForm = ({ isSubmitting, onSubmitTask }: TaskFormProps) => {
       onSubmit={(event) => void handleSubmit(event)}
     >
       <div className="input">
-        <label htmlFor="new-task">Yeni görev</label>
+        <label htmlFor="new-task">New task</label>
         <input
           id="new-task"
           type="text"
           value={taskText}
-          placeholder="Örn. Haftalık raporu tamamla"
+          placeholder="e.g. Finish the weekly report"
           maxLength={TASK_TEXT_MAX_LENGTH}
           disabled={isSubmitting}
           aria-describedby={validationError ? 'task-validation-error' : undefined}
@@ -58,7 +58,7 @@ const TaskForm = ({ isSubmitting, onSubmitTask }: TaskFormProps) => {
         />
       </div>
       <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Ekleniyor…' : 'Görev ekle'}
+        {isSubmitting ? 'Adding…' : 'Add task'}
       </button>
       {validationError && (
         <p id="task-validation-error" className="validation-error" role="alert">

@@ -17,8 +17,8 @@ const TaskItem = ({ task, isPending, onToggle, onDelete }: TaskItemProps) => (
       disabled={isPending}
       aria-label={
         task.completed
-          ? `${task.text} görevini geri al`
-          : `${task.text} görevini tamamla`
+          ? `Mark ${task.text} as incomplete`
+          : `Mark ${task.text} as complete`
       }
       aria-pressed={task.completed}
     >
@@ -30,9 +30,9 @@ const TaskItem = ({ task, isPending, onToggle, onDelete }: TaskItemProps) => (
       type="button"
       onClick={() => onDelete(task)}
       disabled={isPending}
-      aria-label={`${task.text} görevini sil`}
+      aria-label={`Delete ${task.text}`}
     >
-      {isPending ? '…' : 'Sil'}
+      {isPending ? '…' : 'Delete'}
     </button>
   </li>
 );

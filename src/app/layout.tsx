@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Odak — Görev Listesi',
-  description: 'Sade ve hızlı görev yönetimi.',
+  title: 'Focus — Task List',
+  description: 'Simple and fast task management.',
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang="tr">
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

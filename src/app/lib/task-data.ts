@@ -8,9 +8,9 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 export const normalizeTaskText = (value: string): string => {
   const normalizedText = value.trim();
 
-  if (!normalizedText) throw new Error('Görev metni boş bırakılamaz.');
+  if (!normalizedText) throw new Error('Task text cannot be empty.');
   if (normalizedText.length > TASK_TEXT_MAX_LENGTH) {
-    throw new Error(`Görev metni en fazla ${TASK_TEXT_MAX_LENGTH} karakter olabilir.`);
+    throw new Error(`Task text cannot exceed ${TASK_TEXT_MAX_LENGTH} characters.`);
   }
 
   return normalizedText;
@@ -18,7 +18,7 @@ export const normalizeTaskText = (value: string): string => {
 
 export const parseTaskCollection = (data: unknown): Task[] => {
   if (data === null) return [];
-  if (!isRecord(data)) throw new Error('Sunucudan geçersiz görev verisi alındı.');
+  if (!isRecord(data)) throw new Error('The server returned invalid task data.');
 
   return Object.entries(data).flatMap(([id, value]) => {
     if (!isRecord(value) || typeof value.text !== 'string') return [];
@@ -33,7 +33,7 @@ export const parseTaskCollection = (data: unknown): Task[] => {
     return [{
       id,
       text,
-      // Eski kayıtlarda alan bulunmadığında görev tamamlanmamış kabul edilir.
+      // Records created by older versions may not have a completion state.
       completed: value.completed === true,
     }];
   });
@@ -41,7 +41,7 @@ export const parseTaskCollection = (data: unknown): Task[] => {
 
 export const parseCreatedTaskId = (data: unknown): string => {
   if (!isRecord(data) || typeof data.name !== 'string' || !data.name) {
-    throw new Error('Oluşturulan görev için geçerli bir kimlik alınamadı.');
+    throw new Error('The created task did not return a valid ID.');
   }
 
   return data.name;

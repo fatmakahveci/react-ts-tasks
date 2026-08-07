@@ -28,20 +28,20 @@ const Tasks = ({
   let content: ReactNode;
 
   if (isLoading) {
-    content = <p className="status">Görevler yükleniyor…</p>;
+    content = <p className="status">Loading tasks…</p>;
   } else if (loadError) {
     content = (
       <div className="status status--error" role="alert">
         <p>{loadError}</p>
-        <button type="button" onClick={onRetry}>Tekrar dene</button>
+        <button type="button" onClick={onRetry}>Try again</button>
       </div>
     );
   } else if (tasks.length === 0) {
     content = (
       <div className="empty-state">
         <span aria-hidden="true">✓</span>
-        <h2>Liste tertemiz</h2>
-        <p>İlk görevini yukarıdaki alandan ekleyebilirsin.</p>
+        <h2>Your list is clear</h2>
+        <p>Add your first task using the form above.</p>
       </div>
     );
   } else {
@@ -64,10 +64,10 @@ const Tasks = ({
     <Section>
       <div className="list-heading">
         <div>
-          <p className="eyebrow">LİSTEN</p>
-          <h2>Bugünün görevleri</h2>
+          <p className="eyebrow">YOUR LIST</p>
+          <h2>Today&apos;s tasks</h2>
         </div>
-        {tasks.length > 0 && <span>{tasks.length} görev</span>}
+        {tasks.length > 0 && <span>{tasks.length} tasks</span>}
       </div>
       {actionError && (
         <p className="action-error" role="alert">{actionError}</p>

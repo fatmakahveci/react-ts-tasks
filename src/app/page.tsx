@@ -12,7 +12,7 @@ import type { Task } from '@/shared/types';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const getErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : 'Beklenmeyen bir hata oluştu.';
+  error instanceof Error ? error.message : 'An unexpected error occurred.';
 
 const isAbortError = (error: unknown): boolean =>
   error instanceof DOMException && error.name === 'AbortError';
@@ -119,12 +119,12 @@ const Home = () => {
   return (
     <main className="app-shell">
       <header className="hero">
-        <p className="eyebrow">GÜNLÜK ODAK</p>
-        <h1>Görevlerini sadeleştir.</h1>
-        <p>Yapacaklarını ekle, ilerlemeni gör ve gününü hafiflet.</p>
+        <p className="eyebrow">DAILY FOCUS</p>
+        <h1>Simplify your tasks.</h1>
+        <p>Add your to-dos, track your progress, and lighten your day.</p>
         <div className="stats" aria-live="polite">
-          <span><strong>{tasks.length}</strong> toplam</span>
-          <span><strong>{completedCount}</strong> tamamlandı</span>
+          <span><strong>{tasks.length}</strong> total</span>
+          <span><strong>{completedCount}</strong> completed</span>
         </div>
       </header>
 
