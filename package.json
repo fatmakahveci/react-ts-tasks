@@ -1,8 +1,37 @@
 {
   "name": "react-ts-tasks",
   "version": "0.1.0",
-  "private": true,
+  "description": "A responsive task management app built with Next.js, React, TypeScript, and Firebase.",
+  "license": "Apache-2.0",
+  "author": "fatmakhv",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fatmakahveci/react-ts-tasks.git"
+  },
+  "homepage": "https://github.com/fatmakahveci/react-ts-tasks#readme",
+  "bugs": {
+    "url": "https://github.com/fatmakahveci/react-ts-tasks/issues"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "typescript",
+    "firebase",
+    "task-manager"
+  ],
+  "files": [
+    ".env.example",
+    "eslint.config.mjs",
+    "src",
+    "tsconfig.json"
+  ],
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
