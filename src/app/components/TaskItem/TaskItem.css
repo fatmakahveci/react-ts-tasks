@@ -1,10 +1,44 @@
 .task {
-    border-bottom: 1px solid #ccc;
-    padding: 1rem;
-    font-weight: bold;
-    font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  min-height: 58px;
+  padding: .65rem .25rem;
+  border-bottom: 1px solid var(--line);
 }
 
-.task:last-of-type {
-    border-bottom: none;
+.task:last-child { border-bottom: 0; }
+
+.task__toggle {
+  display: grid;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  place-items: center;
+  border: 2px solid #aab4ae;
+  border-radius: 50%;
+  color: white;
+  background: transparent;
+  font-size: .8rem;
+  font-weight: 800;
 }
+
+.task__toggle:hover { border-color: var(--green); }
+.task--completed .task__toggle { border-color: var(--green); background: var(--green); }
+
+.task__text { flex: 1; line-height: 1.35; overflow-wrap: anywhere; }
+
+.task--completed .task__text { color: #8b948f; text-decoration: line-through; }
+
+.task__delete {
+  padding: .4rem .55rem;
+  border: 0;
+  border-radius: 8px;
+  color: var(--muted);
+  background: transparent;
+  font-size: .76rem;
+  font-weight: 700;
+}
+
+.task__delete:hover { color: var(--danger); background: #faece9; }

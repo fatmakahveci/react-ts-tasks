@@ -1,19 +1,24 @@
 'use client';
 
 import { InputProps } from '@/shared/types';
-import { FC, forwardRef } from 'react';
+import { forwardRef } from 'react';
+import './Input.css';
 
-const Input: FC<InputProps> = forwardRef(({label, input}, ref) => {
+const Input = forwardRef<HTMLInputElement, InputProps>(({ label, input }, ref) => {
   return (
     <div className="input">
-      <label htmlFor={input["id"]}>{label}</label>
+      <label htmlFor={input.id}>{label}</label>
       <input
-        id={`task_${input["id"]}`}
-        type={input["type"]}
+        id={input.id}
+        type={input.type}
+        placeholder={input.placeholder}
         ref={ref}
+        maxLength={160}
       />
     </div>
-  )
+  );
 });
+
+Input.displayName = 'Input';
 
 export default Input;

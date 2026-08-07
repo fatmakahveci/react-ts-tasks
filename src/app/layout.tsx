@@ -1,5 +1,11 @@
-import { ReactNode } from 'react'
-import './globals.css'
+import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
+import './globals.css';
+
+export const metadata: Metadata = {
+  title: 'Odak — Görev Listesi',
+  description: 'Sade ve hızlı görev yönetimi.',
+};
 
 export default function RootLayout({
   children,
@@ -7,8 +13,8 @@ export default function RootLayout({
   children: ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className="{body}">{children}</body>
+    <html lang="tr">
+      <body>{children}</body>
     </html>
-  )
+  );
 }

@@ -3,37 +3,42 @@
 import TaskForm from '@/app/components/TaskForm/TaskForm';
 import Section from '@/app/components/UI/Section/Section';
 import useHttp from '@/app/hooks/use-http';
-import { NewsTasksProps, Task, UseHttpReturnType } from '@/shared/types';
-import { FC } from 'react';
+import { tasksUrl } from '@/app/lib/api';
+import type { NewTaskProps } from '@/shared/types';
+import type { FC } from 'react';
 import './NewTasks.css';
 
-const NewTask: FC<NewsTasksProps> = ({ onAddTask }) => {
-  const { isLoading, error, sendRequest: sendTaskRequest }: UseHttpReturnType = useHttp();
+type FirebasePostResponse = { name?: unknown };
 
-  const createTask = (taskText: string, taskData: any) => {
-    const generatedId: string = taskData.name;
-    const createdTask: Task = { id: generatedId, text: taskText };
+const NewTask: FC<NewTaskProps> = ({ onAddTask }) => {
+  const { isLoading, error, sendRequest } = useHttp();
 
-    onAddTask(createdTask);
-  };
-
-  const enterTaskHandler = async (taskText: string): Promise<void> => {
-    sendTaskRequest({
-      url: 'https://react-ts-tasks-e42eb-default-rtdb.firebaseio.com/tasks.json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  const enterTaskHandler = async (taskText: string): Promise<boolean> => {
+    let generatedId = '';
+    const succeeded = await sendRequest(
+      {
+        url: tasksUrl,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: { text: taskText, completed: false },
       },
-      body: { text: taskText },
-    },
-    createTask.bind(null, taskText)
+      (data) => {
+        const response = data as FirebasePostResponse;
+        if (typeof response.name === 'string') generatedId = response.name;
+      },
     );
+
+    if (succeeded && generatedId) {
+      onAddTask({ id: generatedId, text: taskText, completed: false });
+      return true;
+    }
+    return false;
   };
 
   return (
     <Section>
       <TaskForm onEnterTask={enterTaskHandler} loading={isLoading} />
-      {error && <p>{error.message}</p>}
+      {error && <p className="form-error" role="alert">{error.message}</p>}
     </Section>
   );
 };
