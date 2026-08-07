@@ -1,32 +1,42 @@
-'use client';
-
 import TaskItem from '@/app/components/TaskItem/TaskItem';
 import Section from '@/app/components/UI/Section/Section';
-import type { TasksProps } from '@/shared/types';
-import type { FC, ReactNode } from 'react';
+import type { Task } from '@/shared/types';
+import type { ReactNode } from 'react';
 import './Tasks.css';
 
-const Tasks: FC<TasksProps> = ({
-  items,
-  error,
-  loading,
-  busyTaskId,
-  onFetch,
-  onToggle,
-  onDelete,
-}) => {
+type TasksProps = {
+  tasks: Task[];
+  isLoading: boolean;
+  loadError: string | null;
+  actionError: string | null;
+  pendingTaskIds: ReadonlySet<string>;
+  onRetry: () => void;
+  onToggleTask: (task: Task) => void;
+  onDeleteTask: (task: Task) => void;
+};
+
+const Tasks = ({
+  tasks,
+  isLoading,
+  loadError,
+  actionError,
+  pendingTaskIds,
+  onRetry,
+  onToggleTask,
+  onDeleteTask,
+}: TasksProps) => {
   let content: ReactNode;
 
-  if (loading) {
+  if (isLoading) {
     content = <p className="status">Görevler yükleniyor…</p>;
-  } else if (error) {
+  } else if (loadError) {
     content = (
       <div className="status status--error" role="alert">
-        <p>{error.message}</p>
-        <button type="button" onClick={onFetch}>Tekrar dene</button>
+        <p>{loadError}</p>
+        <button type="button" onClick={onRetry}>Tekrar dene</button>
       </div>
     );
-  } else if (items.length === 0) {
+  } else if (tasks.length === 0) {
     content = (
       <div className="empty-state">
         <span aria-hidden="true">✓</span>
@@ -37,13 +47,13 @@ const Tasks: FC<TasksProps> = ({
   } else {
     content = (
       <ul className="task-list">
-        {items.map((task) => (
+        {tasks.map((task) => (
           <TaskItem
             key={task.id}
             task={task}
-            busy={busyTaskId === task.id}
-            onToggle={onToggle}
-            onDelete={onDelete}
+            isPending={pendingTaskIds.has(task.id)}
+            onToggle={onToggleTask}
+            onDelete={onDeleteTask}
           />
         ))}
       </ul>
@@ -57,8 +67,11 @@ const Tasks: FC<TasksProps> = ({
           <p className="eyebrow">LİSTEN</p>
           <h2>Bugünün görevleri</h2>
         </div>
-        {items.length > 0 && <span>{items.length} görev</span>}
+        {tasks.length > 0 && <span>{tasks.length} görev</span>}
       </div>
+      {actionError && (
+        <p className="action-error" role="alert">{actionError}</p>
+      )}
       <div className="container">{content}</div>
     </Section>
   );

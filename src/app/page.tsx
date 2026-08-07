@@ -2,73 +2,116 @@
 
 import NewTask from '@/app/components/NewTasks/NewTasks';
 import Tasks from '@/app/components/Tasks/Tasks';
-import useHttp from '@/app/hooks/use-http';
-import { taskUrl, tasksUrl } from '@/app/lib/api';
+import {
+  createTask,
+  getTasks,
+  removeTask,
+  setTaskCompleted,
+} from '@/app/lib/task-api';
 import type { Task } from '@/shared/types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-type FirebaseTask = {
-  text?: unknown;
-  completed?: unknown;
-};
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : 'Beklenmeyen bir hata oluştu.';
 
-const Home = (): JSX.Element => {
+const isAbortError = (error: unknown): boolean =>
+  error instanceof DOMException && error.name === 'AbortError';
+
+const Home = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [busyTaskId, setBusyTaskId] = useState<string | null>(null);
-  const { isLoading, error, sendRequest } = useHttp();
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [pendingTaskIds, setPendingTaskIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
+  const pendingTaskIdsRef = useRef(new Set<string>());
 
-  const fetchTasks = useCallback((): void => {
-    void sendRequest({ url: tasksUrl }, (data) => {
-      const tasksObject = (data ?? {}) as Record<string, FirebaseTask>;
-      const loadedTasks = Object.entries(tasksObject)
-        .filter(([, task]) => typeof task?.text === 'string')
-        .map(([id, task]) => ({
-          id,
-          text: task.text as string,
-          completed: task.completed === true,
-        }));
+  const loadTasks = useCallback(async (): Promise<void> => {
+    setIsLoading(true);
+    setLoadError(null);
 
-      setTasks(loadedTasks);
-    });
-  }, [sendRequest]);
+    try {
+      setTasks(await getTasks());
+    } catch (error) {
+      setLoadError(getErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    const controller = new AbortController();
 
-  const toggleTask = async (task: Task): Promise<void> => {
-    setBusyTaskId(task.id);
+    void getTasks(controller.signal)
+      .then(setTasks)
+      .catch((error: unknown) => {
+        if (!isAbortError(error)) setLoadError(getErrorMessage(error));
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoading(false);
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  const handleCreateTask = async (text: string): Promise<boolean> => {
+    setIsCreating(true);
+    setCreateError(null);
+
+    try {
+      const task = await createTask(text);
+      setTasks((currentTasks) => [...currentTasks, task]);
+      return true;
+    } catch (error) {
+      setCreateError(getErrorMessage(error));
+      return false;
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const runTaskAction = async (
+    taskId: string,
+    action: () => Promise<void>,
+  ): Promise<void> => {
+    if (pendingTaskIdsRef.current.has(taskId)) return;
+
+    pendingTaskIdsRef.current.add(taskId);
+    setPendingTaskIds(new Set(pendingTaskIdsRef.current));
+    setActionError(null);
+
+    try {
+      await action();
+    } catch (error) {
+      setActionError(getErrorMessage(error));
+    } finally {
+      pendingTaskIdsRef.current.delete(taskId);
+      setPendingTaskIds(new Set(pendingTaskIdsRef.current));
+    }
+  };
+
+  const handleToggleTask = (task: Task): void => {
     const completed = !task.completed;
-    const succeeded = await sendRequest({
-      url: taskUrl(task.id),
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: { completed },
-    });
-
-    if (succeeded) {
+    void runTaskAction(task.id, async () => {
+      await setTaskCompleted(task.id, completed);
       setTasks((currentTasks) =>
         currentTasks.map((item) =>
           item.id === task.id ? { ...item, completed } : item,
         ),
       );
-    }
-    setBusyTaskId(null);
+    });
   };
 
-  const deleteTask = async (task: Task): Promise<void> => {
-    setBusyTaskId(task.id);
-    const succeeded = await sendRequest({
-      url: taskUrl(task.id),
-      method: 'DELETE',
-    });
-
-    if (succeeded) {
+  const handleDeleteTask = (task: Task): void => {
+    void runTaskAction(task.id, async () => {
+      await removeTask(task.id);
       setTasks((currentTasks) =>
         currentTasks.filter((item) => item.id !== task.id),
       );
-    }
-    setBusyTaskId(null);
+    });
   };
 
   const completedCount = tasks.filter((task) => task.completed).length;
@@ -85,15 +128,20 @@ const Home = (): JSX.Element => {
         </div>
       </header>
 
-      <NewTask onAddTask={(task) => setTasks((current) => [...current, task])} />
+      <NewTask
+        isCreating={isCreating}
+        error={createError}
+        onCreateTask={handleCreateTask}
+      />
       <Tasks
-        items={tasks}
-        loading={isLoading && busyTaskId === null}
-        error={error}
-        busyTaskId={busyTaskId}
-        onFetch={fetchTasks}
-        onToggle={(task) => void toggleTask(task)}
-        onDelete={(task) => void deleteTask(task)}
+        tasks={tasks}
+        isLoading={isLoading}
+        loadError={loadError}
+        actionError={actionError}
+        pendingTaskIds={pendingTaskIds}
+        onRetry={() => void loadTasks()}
+        onToggleTask={handleToggleTask}
+        onDeleteTask={handleDeleteTask}
       />
     </main>
   );

@@ -20,3 +20,11 @@ Adres `tasks.json` ile bitmelidir.
 - Yükleme, hata, doğrulama ve boş liste durumları
 - Mobil uyumlu arayüz
 - Firebase verileri için tip güvenli dönüşüm
+
+## Kalite kontrolleri
+
+```bash
+npm run check
+```
+
+Bu komut sırasıyla lint, birim testleri ve üretim derlemesini çalıştırır.

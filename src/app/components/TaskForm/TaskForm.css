@@ -5,6 +5,37 @@
   position: relative;
 }
 
+.input {
+  flex: 1;
+  min-width: 0;
+}
+
+.input label {
+  display: block;
+  margin-bottom: .45rem;
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.input input {
+  width: 100%;
+  min-height: 48px;
+  padding: .75rem .9rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  outline: none;
+  color: var(--ink);
+  background: #fff;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.input input::placeholder { color: #98a19c; }
+
+.input input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 4px rgba(23, 107, 77, .1);
+}
+
 .form button, .status button {
   min-height: 48px;
   padding: .7rem 1.1rem;
@@ -22,7 +53,17 @@
 .validation-error, .form-error { margin: .5rem 0 0; color: var(--danger); font-size: .8rem; }
 
 @media (max-width: 560px) {
-  .form { align-items: stretch; flex-direction: column; }
-  .form button { width: 100%; }
-  .validation-error { position: static; margin: 0; }
+  .form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .form button {
+    width: 100%;
+  }
+
+  .validation-error {
+    position: static;
+    margin: 0;
+  }
 }

@@ -1,13 +1,18 @@
 .list-heading {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
   margin-bottom: .8rem;
   padding: .2rem .2rem .9rem;
   border-bottom: 1px solid var(--line);
 }
 
-.list-heading h2 { margin: .15rem 0 0; font: 700 1.2rem 'Manrope', sans-serif; }
+.list-heading h2 {
+  margin: 0.15rem 0 0;
+  font: 700 1.2rem var(--font-heading);
+}
 
 .list-heading > span {
   padding: .35rem .65rem;
@@ -24,6 +29,15 @@
 .status p { margin-top: 0; }
 .status--error { color: var(--danger); }
 
+.action-error {
+  margin: 0 0 .75rem;
+  padding: .7rem .8rem;
+  border-radius: 10px;
+  color: var(--danger);
+  background: #faece9;
+  font-size: .85rem;
+}
+
 .empty-state span {
   display: grid;
   width: 48px;
@@ -36,5 +50,16 @@
   font-size: 1.35rem;
 }
 
-.empty-state h2 { margin: 0 0 .35rem; color: var(--ink); font: 700 1.1rem 'Manrope', sans-serif; }
+.empty-state h2 {
+  margin: 0 0 0.35rem;
+  color: var(--ink);
+  font: 700 1.1rem var(--font-heading);
+}
 .empty-state p { margin: 0; font-size: .9rem; }
+
+@media (max-width: 360px) {
+  .status,
+  .empty-state {
+    padding: 2rem 0.25rem;
+  }
+}

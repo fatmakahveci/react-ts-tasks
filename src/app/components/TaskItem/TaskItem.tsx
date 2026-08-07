@@ -1,17 +1,25 @@
-'use client';
-
-import type { TaskItemProps } from '@/shared/types';
-import type { FC } from 'react';
+import type { Task } from '@/shared/types';
 import './TaskItem.css';
 
-const TaskItem: FC<TaskItemProps> = ({ task, busy, onToggle, onDelete }) => (
+type TaskItemProps = {
+  task: Task;
+  isPending: boolean;
+  onToggle: (task: Task) => void;
+  onDelete: (task: Task) => void;
+};
+
+const TaskItem = ({ task, isPending, onToggle, onDelete }: TaskItemProps) => (
   <li className={`task${task.completed ? ' task--completed' : ''}`}>
     <button
       className="task__toggle"
       type="button"
       onClick={() => onToggle(task)}
-      disabled={busy}
-      aria-label={task.completed ? `${task.text} görevini geri al` : `${task.text} görevini tamamla`}
+      disabled={isPending}
+      aria-label={
+        task.completed
+          ? `${task.text} görevini geri al`
+          : `${task.text} görevini tamamla`
+      }
       aria-pressed={task.completed}
     >
       <span aria-hidden="true">{task.completed ? '✓' : ''}</span>
@@ -21,10 +29,10 @@ const TaskItem: FC<TaskItemProps> = ({ task, busy, onToggle, onDelete }) => (
       className="task__delete"
       type="button"
       onClick={() => onDelete(task)}
-      disabled={busy}
+      disabled={isPending}
       aria-label={`${task.text} görevini sil`}
     >
-      {busy ? '…' : 'Sil'}
+      {isPending ? '…' : 'Sil'}
     </button>
   </li>
 );
