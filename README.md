@@ -33,3 +33,10 @@ npm run check
 ```
 
 This command runs linting, unit tests, and the production build in sequence.
+
+## Project Resources
+
+- [Changelog](CHANGELOG.md)
+- [Contributing guide](.github/CONTRIBUTING.md)
+- [Security policy](.github/SECURITY.md)
+- [License](LICENSE.md)
