@@ -11,6 +11,14 @@ where applicable.
 ### Added
 
 - Added an initial changelog to track future project changes.
+- Added continuous integration for dependency audit, linting, tests, and production builds.
+- Added weekly Dependabot updates for npm and GitHub Actions dependencies.
+- Added validated, environment-only Firebase endpoint configuration.
+
+### Security
+
+- Removed the hard-coded shared Firebase database fallback.
+- Enforced HTTPS for remote Firebase endpoints while retaining local emulator support.
 
 <!--
 When preparing a release, move relevant entries from Unreleased into a dated

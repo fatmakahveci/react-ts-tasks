@@ -1,5 +1,6 @@
 # Focus — Task Manager
 
+[![CI](https://github.com/fatmakahveci/react-ts-tasks/actions/workflows/ci.yml/badge.svg)](https://github.com/fatmakahveci/react-ts-tasks/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/fatmakahveci/react-ts-tasks?display_name=tag&sort=semver)](https://github.com/fatmakahveci/react-ts-tasks/releases)
 [![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)](https://react.dev/)
@@ -35,6 +36,7 @@ The walkthrough uses fictional sample data to demonstrate the core task flow wit
 - CSS with responsive and reduced-motion styles
 - Node.js built-in test runner
 - ESLint with Next.js Core Web Vitals rules
+- GitHub Actions continuous integration and Dependabot updates
 
 ## Getting Started
 
@@ -64,7 +66,7 @@ Set the complete Firebase collection URL in `.env.local`:
 NEXT_PUBLIC_FIREBASE_TASKS_URL=https://your-project-default-rtdb.firebaseio.com/tasks.json
 ```
 
-The value must use the Firebase Realtime Database REST endpoint and end with `/tasks.json`. When the variable is omitted, the application uses its demonstration database URL.
+The value is required, must use the Firebase Realtime Database REST endpoint, and must end with `/tasks.json`. HTTPS is enforced except when connecting to a local Firebase emulator through `localhost` or `127.0.0.1`.
 
 Because `NEXT_PUBLIC_*` values are included in browser code, this URL is not a secret. Authentication, authorization, and schema restrictions must be enforced with Firebase Security Rules. Never store service-account credentials or private tokens in this variable.
 

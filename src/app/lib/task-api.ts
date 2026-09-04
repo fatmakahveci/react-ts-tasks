@@ -4,24 +4,12 @@ import {
   parseCreatedTaskId,
   parseTaskCollection,
 } from './task-data';
+import { resolveTasksUrl } from './task-config';
 
-const DEFAULT_TASKS_URL =
-  'https://react-ts-tasks-e42eb-default-rtdb.firebaseio.com/tasks.json';
-
-const configuredUrl =
-  process.env.NEXT_PUBLIC_FIREBASE_TASKS_URL?.trim() || DEFAULT_TASKS_URL;
-
-const TASKS_URL = configuredUrl.replace(/\/$/, '');
 const REQUEST_TIMEOUT_MS = 10_000;
 
-if (!TASKS_URL.endsWith('/tasks.json')) {
-  throw new Error(
-    'NEXT_PUBLIC_FIREBASE_TASKS_URL must be a valid Firebase tasks.json URL.',
-  );
-}
-
-const taskUrl = (id: string): string =>
-  `${TASKS_URL.slice(0, -'.json'.length)}/${encodeURIComponent(id)}.json`;
+const taskUrl = (tasksUrl: string, id: string): string =>
+  `${tasksUrl.slice(0, -'.json'.length)}/${encodeURIComponent(id)}.json`;
 
 const request = async (url: string, init?: RequestInit): Promise<unknown> => {
   const timeoutSignal = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
@@ -48,13 +36,13 @@ const request = async (url: string, init?: RequestInit): Promise<unknown> => {
 };
 
 export const getTasks = async (signal?: AbortSignal): Promise<Task[]> => {
-  const data = await request(TASKS_URL, { signal });
+  const data = await request(resolveTasksUrl(), { signal });
   return parseTaskCollection(data);
 };
 
 export const createTask = async (text: string): Promise<Task> => {
   const normalizedText = normalizeTaskText(text);
-  const data = await request(TASKS_URL, {
+  const data = await request(resolveTasksUrl(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text: normalizedText, completed: false }),
@@ -71,7 +59,7 @@ export const setTaskCompleted = async (
   id: string,
   completed: boolean,
 ): Promise<void> => {
-  await request(taskUrl(id), {
+  await request(taskUrl(resolveTasksUrl(), id), {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ completed }),
@@ -79,5 +67,5 @@ export const setTaskCompleted = async (
 };
 
 export const removeTask = async (id: string): Promise<void> => {
-  await request(taskUrl(id), { method: 'DELETE' });
+  await request(taskUrl(resolveTasksUrl(), id), { method: 'DELETE' });
 };
