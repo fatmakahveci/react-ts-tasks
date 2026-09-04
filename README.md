@@ -8,6 +8,12 @@
 A simple task management application built with Next.js, React, and TypeScript,
 using Firebase Realtime Database for persistence.
 
+## Demo
+
+![Animated walkthrough of Focus adding, completing, and deleting tasks](demo.gif)
+
+The walkthrough uses fictional sample data to demonstrate the core task flow without writing to a live Firebase database.
+
 ## Getting started
 
 ```bash
