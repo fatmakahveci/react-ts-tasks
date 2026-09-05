@@ -49,6 +49,16 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
+  "overrides": {
+    "body-parser@^1.20.0": "1.20.6",
+    "qs": "6.16.0",
+    "gaxios": {
+      "uuid": "11.1.1"
+    },
+    "@google-cloud/pubsub": {
+      "@opentelemetry/core": "2.8.0"
+    }
+  },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^5.0.2",
     "@types/node": "26.4.1",
