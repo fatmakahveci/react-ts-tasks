@@ -8,6 +8,13 @@ where applicable.
 
 ## [Unreleased]
 
+### Demo workspace
+
+- Added a default, account-free demo with example tasks and browser-local persistence.
+- Added clear storage/privacy messaging and validation for corrupt data or unavailable storage.
+- Preserved cloud mode as an explicit `NEXT_PUBLIC_TASK_MODE=cloud` option without changing remote configuration.
+- Added regression tests for demo task operations, persistence, empty lists, validation, and storage failures.
+
 ### Development dependency security
 
 - Updated Firebase CLI transitive dependencies for `body-parser`, `qs`, `uuid`, and OpenTelemetry through scoped overrides.
