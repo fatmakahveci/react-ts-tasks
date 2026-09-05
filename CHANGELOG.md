@@ -8,6 +8,11 @@ where applicable.
 
 ## [Unreleased]
 
+### Development dependency security
+
+- Updated Firebase CLI transitive dependencies for `body-parser`, `qs`, `uuid`, and OpenTelemetry through scoped overrides.
+- The development-only `stream-json` advisory GHSA-528h-pc64-c93x remains unresolved: Firebase CLI uses CommonJS entry points that are incompatible with the patched ESM release. Avoid importing untrusted JSON through the CLI until upstream provides a compatible fix. Production dependencies are unaffected.
+
 ### Added
 
 - Added email/password accounts, sign-out, and private user-scoped task storage.
