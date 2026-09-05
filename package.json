@@ -38,7 +38,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "node --test src/app/lib/task-data.test.ts tests/firebase-cli-compat.test.mjs",
+    "test": "node --test src/app/lib/task-data.test.ts src/app/lib/demo-tasks.test.ts tests/firebase-cli-compat.test.mjs",
     "test:firebase": "firebase emulators:exec --project demo-focus --only auth,database 'node --test tests/firebase.test.mjs'",
     "emulators": "firebase emulators:start --project demo-focus --only auth,database",
     "typecheck": "tsc --noEmit",

@@ -71,6 +71,20 @@ button:disabled {
 
 .hero { margin-bottom: 2.25rem; }
 
+.demo-banner {
+  margin-bottom: 1.75rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--green);
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
+.demo-banner strong { color: var(--green-dark); }
+.demo-banner p { margin: .3rem 0 0; }
+
 .hero h1 {
   max-width: 620px;
   margin: .35rem 0 .65rem;
