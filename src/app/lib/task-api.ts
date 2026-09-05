@@ -1,71 +1,33 @@
+import { get, push, ref, remove, set, update } from 'firebase/database';
 import type { Task } from '@/shared/types';
-import {
-  normalizeTaskText,
-  parseCreatedTaskId,
-  parseTaskCollection,
-} from './task-data';
-import { resolveTasksUrl } from './task-config';
+import { normalizeTaskText, parseTaskCollection } from './task-data.ts';
+import { firebaseServices } from './firebase.ts';
 
-const REQUEST_TIMEOUT_MS = 10_000;
+function tasksRef(id?: string) {
+  const { auth, database } = firebaseServices();
+  const user = auth.currentUser;
+  if (!user) throw new Error('Sign in to access your tasks.');
+  if (id && /[.#$\[\]/]/.test(id)) throw new Error('Invalid task identifier.');
+  return ref(database, `users/${user.uid}/tasks${id ? `/${id}` : ''}`);
+}
 
-const taskUrl = (tasksUrl: string, id: string): string =>
-  `${tasksUrl.slice(0, -'.json'.length)}/${encodeURIComponent(id)}.json`;
+export async function getTasks(signal?: AbortSignal): Promise<Task[]> {
+  const snapshot = await get(tasksRef());
+  signal?.throwIfAborted();
+  return parseTaskCollection(snapshot.val());
+}
 
-const request = async (url: string, init?: RequestInit): Promise<unknown> => {
-  const timeoutSignal = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
-  const signal = init?.signal
-    ? AbortSignal.any([init.signal, timeoutSignal])
-    : timeoutSignal;
+export async function createTask(text: string): Promise<Task> {
+  const task = { text: normalizeTaskText(text), completed: false };
+  const target = push(tasksRef());
+  await set(target, task);
+  return { id: target.key!, ...task };
+}
 
-  let response: Response;
-  try {
-    response = await fetch(url, { ...init, signal });
-  } catch (error) {
-    if (timeoutSignal.aborted && !init?.signal?.aborted) {
-      throw new Error('The server timed out. Please try again.');
-    }
-    throw error;
-  }
+export async function setTaskCompleted(id: string, completed: boolean): Promise<void> {
+  await update(tasksRef(id), { completed });
+}
 
-  if (!response.ok) {
-    throw new Error(`The server request failed (${response.status}).`);
-  }
-
-  const data: unknown = await response.json();
-  return data;
-};
-
-export const getTasks = async (signal?: AbortSignal): Promise<Task[]> => {
-  const data = await request(resolveTasksUrl(), { signal });
-  return parseTaskCollection(data);
-};
-
-export const createTask = async (text: string): Promise<Task> => {
-  const normalizedText = normalizeTaskText(text);
-  const data = await request(resolveTasksUrl(), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: normalizedText, completed: false }),
-  });
-
-  return {
-    id: parseCreatedTaskId(data),
-    text: normalizedText,
-    completed: false,
-  };
-};
-
-export const setTaskCompleted = async (
-  id: string,
-  completed: boolean,
-): Promise<void> => {
-  await request(taskUrl(resolveTasksUrl(), id), {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ completed }),
-  });
-};
-
-export const removeTask = async (id: string): Promise<void> => {
-  await request(taskUrl(resolveTasksUrl(), id), { method: 'DELETE' });
-};
+export async function removeTask(id: string): Promise<void> {
+  await remove(tasksRef(id));
+}
