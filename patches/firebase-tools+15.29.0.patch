@@ -1,0 +1,48 @@
+diff --git a/node_modules/firebase-tools/lib/commands/auth-import.js b/node_modules/firebase-tools/lib/commands/auth-import.js
+index baf37f7..6b21e0f 100644
+--- a/node_modules/firebase-tools/lib/commands/auth-import.js
++++ b/node_modules/firebase-tools/lib/commands/auth-import.js
+@@ -5,8 +5,8 @@ const csv_parse_1 = require("csv-parse");
+ const Chain = require("stream-chain");
+ const clc = require("colorette");
+ const fs = require("fs-extra");
+-const Pick = require("stream-json/filters/Pick");
+-const StreamArray = require("stream-json/streamers/StreamArray");
++const Pick = { withParser: require("stream-json/filters/pick.js").pick.withParserAsStream };
++const StreamArray = { streamArray: require("stream-json/streamers/stream-array.js").streamArray.asStream };
+ const command_1 = require("../command");
+ const error_1 = require("../error");
+ const logger_1 = require("../logger");
+diff --git a/node_modules/firebase-tools/lib/database/import.js b/node_modules/firebase-tools/lib/database/import.js
+index 696ec7a..8cd3294 100644
+--- a/node_modules/firebase-tools/lib/database/import.js
++++ b/node_modules/firebase-tools/lib/database/import.js
+@@ -2,9 +2,9 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ const Chain = require("stream-chain");
+ const clc = require("colorette");
+-const Filter = require("stream-json/filters/Filter");
++const Filter = { withParser: require("stream-json/filters/filter.js").filter.withParserAsStream };
+ const stream = require("stream");
+-const StreamObject = require("stream-json/streamers/StreamObject");
++const StreamObject = { streamObject: require("stream-json/streamers/stream-object.js").streamObject.asStream };
+ const apiv2_1 = require("../apiv2");
+ const error_1 = require("../error");
+ const utils_1 = require("../utils");
+diff --git a/node_modules/firebase-tools/lib/frameworks/next/index.js b/node_modules/firebase-tools/lib/frameworks/next/index.js
+index 5df554c..c797fe9 100644
+--- a/node_modules/firebase-tools/lib/frameworks/next/index.js
++++ b/node_modules/firebase-tools/lib/frameworks/next/index.js
+@@ -16,9 +16,9 @@ const url_1 = require("url");
+ const semver_1 = require("semver");
+ const clc = require("colorette");
+ const stream_chain_1 = require("stream-chain");
+-const stream_json_1 = require("stream-json");
+-const Pick_1 = require("stream-json/filters/Pick");
+-const StreamObject_1 = require("stream-json/streamers/StreamObject");
++const stream_json_1 = { parser: require("stream-json").parserStream };
++const Pick_1 = { pick: require("stream-json/filters/pick.js").pick.asStream };
++const StreamObject_1 = { streamObject: require("stream-json/streamers/stream-object.js").streamObject.asStream };
+ const fsutils_1 = require("../../fsutils");
+ const prompt_1 = require("../../prompt");
+ const error_1 = require("../../error");
