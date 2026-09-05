@@ -11,7 +11,7 @@ where applicable.
 ### Development dependency security
 
 - Updated Firebase CLI transitive dependencies for `body-parser`, `qs`, `uuid`, and OpenTelemetry through scoped overrides.
-- The development-only `stream-json` advisory GHSA-528h-pc64-c93x remains unresolved: Firebase CLI uses CommonJS entry points that are incompatible with the patched ESM release. Avoid importing untrusted JSON through the CLI until upstream provides a compatible fix. Production dependencies are unaffected.
+- Updated `stream-json` to 3.6.0 to address GHSA-528h-pc64-c93x. A version-pinned Firebase CLI compatibility patch adapts its database import, auth import, and Next.js dependency parsers to the secure API. Clean installs apply the patch automatically and fail if it no longer applies; compatibility tests cover all three pipelines. Review and remove the patch when upgrading the CLI to an upstream-compatible release.
 
 ### Added
 
