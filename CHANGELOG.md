@@ -14,6 +14,11 @@ where applicable.
 - Added continuous integration for dependency audit, linting, tests, and production builds.
 - Added weekly Dependabot updates for npm and GitHub Actions dependencies.
 - Added validated, environment-only Firebase endpoint configuration.
+- Added TypeScript 7 native type-checking alongside the TypeScript 6 tooling API.
+
+### Changed
+
+- Updated Next.js and compatible type definitions while retaining ESLint 9 until the Next.js plugin chain supports ESLint 10.
 
 ### Security
 

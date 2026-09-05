@@ -10,6 +10,15 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - dependencies
+    ignore:
+      # Next's current React, import, and accessibility plugins support ESLint 9.
+      - dependency-name: eslint
+        update-types:
+          - version-update:semver-major
+      # TypeScript 7 is installed separately while tooling consumes the TS6 API.
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: github-actions
     directory: /

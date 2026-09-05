@@ -31,7 +31,7 @@ The walkthrough uses fictional sample data to demonstrate the core task flow wit
 
 - Next.js App Router
 - React
-- TypeScript in strict mode
+- TypeScript 7 native type-checking with the TypeScript 6 compatibility API for tooling
 - Firebase Realtime Database REST API
 - CSS with responsive and reduced-motion styles
 - Node.js built-in test runner
@@ -103,7 +103,8 @@ Requests time out after ten seconds. Responses pass through runtime validation b
 | `npm start` | Serve the production build |
 | `npm run lint` | Run ESLint |
 | `npm test` | Run data parsing and validation tests |
-| `npm run check` | Run lint, tests, and the production build |
+| `npm run typecheck` | Validate the project with the TypeScript 7 native compiler |
+| `npm run check` | Run lint, tests, type-checking, and the production build |
 
 ## Testing
 
