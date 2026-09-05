@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE.md)
 
-Focus is a responsive task manager built with Next.js, React, and TypeScript. It keeps a concise daily task list in Firebase Realtime Database and provides clear feedback for every loading, validation, and network state.
+Focus is a responsive task manager built with Next.js, React, and TypeScript. Try it immediately in the account-free demo workspace, with tasks stored in your browser. An optional cloud mode supports authenticated Firebase task lists.
 
 ## Demo
 
@@ -17,6 +17,8 @@ This is an illustrative animation of the task flow, not a recording of the runni
 
 ## Features
 
+- Start immediately with three example tasks; no account, Firebase setup, or emulator required
+- Keep demo tasks across page reloads using browser-local storage, separate from cloud data
 - Create tasks with whitespace normalization and a 160-character limit
 - Mark tasks as complete or return them to the active list
 - Delete tasks with per-item pending states that prevent duplicate requests
@@ -45,9 +47,9 @@ This is an illustrative animation of the task flow, not a recording of the runni
 ### Requirements
 
 - Node.js 22.13 or newer (Node 22 is used in CI)
-- Java 21 for the Firebase emulators
 - npm
-- A Firebase Realtime Database for persistent use
+
+Java 21 and a Firebase project are not required for demo mode. Java is only needed for the optional emulator tests.
 
 ### Installation
 
@@ -55,17 +57,21 @@ This is an illustrative animation of the task flow, not a recording of the runni
 git clone https://github.com/fatmakahveci/react-ts-tasks.git
 cd react-ts-tasks
 npm ci
-cp .env.example .env.local
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
+The default mode is `demo`. Add, complete, reopen, and delete tasks without signing in. Changes stay in `localStorage` under `focus.demo.tasks.v1`, only for this browser profile and site origin. They do not sync to other devices or cloud accounts. Clearing site data removes them; private browsing may discard them when the session ends. Do not use the demo for sensitive data. Reload after edits in another tab to refresh the list.
+
+If your environment previously selected cloud mode, set `NEXT_PUBLIC_TASK_MODE=demo` in `.env.local` and restart (or rebuild for production). When storage is blocked, full, or malformed, the app reports an error instead of claiming a successful save. Malformed data is not silently replaced.
+
 ## Configuration
 
-Set the Firebase web-app configuration in `.env.local` before starting or building:
+Only for optional cloud mode, set the following in `.env.local` before starting or building. Demo mode does not initialize Firebase or send task data to it:
 
 ```dotenv
+NEXT_PUBLIC_TASK_MODE=cloud
 NEXT_PUBLIC_FIREBASE_API_KEY=your-public-web-api-key
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
 NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://your-project-default-rtdb.firebaseio.com
@@ -80,7 +86,7 @@ npx firebase deploy --only database --project YOUR_PROJECT_ID
 
 Deployment requires access to your Firebase project. Adding the rules to this repository does not deploy them. The old shared `/tasks` path is denied by these rules; old records are not automatically assigned to users or migrated.
 
-### Local development without a Firebase account
+### Optional local Firebase emulators
 
 ```bash
 cp .env.emulator.example .env.local
@@ -125,7 +131,7 @@ The SDK manages authenticated connections. Database rules deny anonymous and cro
 | `npm run build` | Create an optimized production build |
 | `npm start` | Serve the production build |
 | `npm run lint` | Run ESLint |
-| `npm test` | Run data parsing and validation tests |
+| `npm test` | Run data validation, demo storage, and CLI compatibility tests |
 | `npm run test:firebase` | Run authentication, SDK CRUD, and access-rule integration tests in local emulators |
 | `npm run emulators` | Start local authentication and database emulators |
 | `npm run typecheck` | Validate the project with the TypeScript 7 native compiler |
@@ -135,6 +141,8 @@ The SDK manages authenticated connections. Database rules deny anonymous and cro
 
 The test suite covers:
 
+- Demo seeding, persistence, task creation, completion, reopening, and deletion
+- Empty lists, invalid saved data, blocked storage, quota failures, and aborted loads
 - Task text trimming and validation
 - Maximum-length enforcement
 - Empty and malformed Firebase responses
@@ -145,6 +153,7 @@ Run the complete quality gate before opening a pull request:
 
 ```bash
 npm run check
+# Optional, requires Java 21:
 npm run test:firebase
 ```
 

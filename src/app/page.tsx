@@ -3,14 +3,13 @@
 import NewTask from '@/app/components/NewTasks/NewTasks';
 import AuthGate from './components/AuthGate';
 import Tasks from '@/app/components/Tasks/Tasks';
-import {
-  createTask,
-  getTasks,
-  removeTask,
-  setTaskCompleted,
-} from '@/app/lib/task-api';
+import * as cloudTasks from '@/app/lib/task-api';
+import { demoTasks } from '@/app/lib/demo-tasks';
 import type { Task } from '@/shared/types';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
+const isDemo = process.env.NEXT_PUBLIC_TASK_MODE !== 'cloud';
+const { createTask, getTasks, removeTask, setTaskCompleted } = isDemo ? demoTasks : cloudTasks;
 
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : 'An unexpected error occurred.';
@@ -119,6 +118,10 @@ const Home = () => {
 
   return (
     <main className="app-shell">
+      {isDemo && <aside className="demo-banner" aria-label="Demo information">
+        <strong>Demo workspace</strong>
+        <p>No account needed. Tasks are saved only in this browser, on this device. Clearing site data removes them. Do not store sensitive information.</p>
+      </aside>}
       <header className="hero">
         <p className="eyebrow">DAILY FOCUS</p>
         <h1>Simplify your tasks.</h1>
@@ -149,5 +152,6 @@ const Home = () => {
 };
 
 export default function Page() {
+  if (isDemo) return <Home />;
   return <AuthGate><Home /></AuthGate>;
 }
