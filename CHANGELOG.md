@@ -10,6 +10,17 @@ where applicable.
 
 ### Added
 
+- Added email/password accounts, sign-out, and private user-scoped task storage.
+- Added deny-by-default database rules and emulator tests for authentication, SDK operations, account isolation, and schema validation.
+- Added local emulator setup instructions and CI integration tests.
+
+### Migration
+
+- Replace the old collection URL setting with the Firebase web-app configuration from `.env.example`.
+- Deploy the database rules and enable Email/Password authentication before production use. Existing shared tasks are not automatically migrated.
+
+### Earlier additions
+
 - Added an initial changelog to track future project changes.
 - Added continuous integration for dependency audit, linting, tests, and production builds.
 - Added weekly Dependabot updates for npm and GitHub Actions dependencies.

@@ -1,6 +1,7 @@
 'use client';
 
 import NewTask from '@/app/components/NewTasks/NewTasks';
+import AuthGate from './components/AuthGate';
 import Tasks from '@/app/components/Tasks/Tasks';
 import {
   createTask,
@@ -147,4 +148,6 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default function Page() {
+  return <AuthGate><Home /></AuthGate>;
+}

@@ -13,15 +13,17 @@ Focus is a responsive task manager built with Next.js, React, and TypeScript. It
 
 ![Animated walkthrough of Focus adding, completing, and deleting tasks](demo.gif)
 
-The walkthrough uses fictional sample data to demonstrate the core task flow without writing to a live Firebase database.
+This is an illustrative animation of the task flow, not a recording of the running app. It predates the account sign-in screen.
 
 ## Features
 
 - Create tasks with whitespace normalization and a 160-character limit
 - Mark tasks as complete or return them to the active list
 - Delete tasks with per-item pending states that prevent duplicate requests
-- Persist changes through the Firebase Realtime Database REST API
-- Handle loading, empty, validation, timeout, request, and retry states
+- Email/password registration, sign-in, and sign-out through Firebase Authentication
+- Private task lists under `users/{uid}/tasks`, protected by database rules
+- Persist changes through the authenticated Firebase SDK
+- Handle loading, empty, validation, request, and retry states
 - Accept legacy Firebase records without a completion field
 - Ignore malformed remote records instead of breaking the entire list
 - Provide accessible labels, live status updates, focus indicators, and touch targets
@@ -32,7 +34,7 @@ The walkthrough uses fictional sample data to demonstrate the core task flow wit
 - Next.js App Router
 - React
 - TypeScript 7 native type-checking with the TypeScript 6 compatibility API for tooling
-- Firebase Realtime Database REST API
+- Firebase Authentication and Realtime Database SDK
 - CSS with responsive and reduced-motion styles
 - Node.js built-in test runner
 - ESLint with Next.js Core Web Vitals rules
@@ -42,7 +44,8 @@ The walkthrough uses fictional sample data to demonstrate the core task flow wit
 
 ### Requirements
 
-- Node.js 20.9 or newer
+- Node.js 22.13 or newer (Node 22 is used in CI)
+- Java 21 for the Firebase emulators
 - npm
 - A Firebase Realtime Database for persistent use
 
@@ -60,19 +63,39 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Configuration
 
-Set the complete Firebase collection URL in `.env.local`:
+Set the Firebase web-app configuration in `.env.local` before starting or building:
 
 ```dotenv
-NEXT_PUBLIC_FIREBASE_TASKS_URL=https://your-project-default-rtdb.firebaseio.com/tasks.json
+NEXT_PUBLIC_FIREBASE_API_KEY=your-public-web-api-key
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://your-project-default-rtdb.firebaseio.com
+NEXT_PUBLIC_USE_FIREBASE_EMULATORS=false
 ```
 
-The value is required, must use the Firebase Realtime Database REST endpoint, and must end with `/tasks.json`. HTTPS is enforced except when connecting to a local Firebase emulator through `localhost` or `127.0.0.1`.
+Enable Email/Password in Firebase Authentication and deploy `database.rules.json` before production use. The database URL must be the HTTPS root URL, without `/tasks.json`. Public build-time variables require rebuilding when changed.
+
+```bash
+npx firebase deploy --only database --project YOUR_PROJECT_ID
+```
+
+Deployment requires access to your Firebase project. Adding the rules to this repository does not deploy them. The old shared `/tasks` path is denied by these rules; old records are not automatically assigned to users or migrated.
+
+### Local development without a Firebase account
+
+```bash
+cp .env.emulator.example .env.local
+npm run emulators
+# In a second terminal:
+npm run dev
+```
+
+Register an account using fictional credentials. Both authentication and storage run locally using project `demo-focus`; data is discarded when the emulators stop.
 
 Because `NEXT_PUBLIC_*` values are included in browser code, this URL is not a secret. Authentication, authorization, and schema restrictions must be enforced with Firebase Security Rules. Never store service-account credentials or private tokens in this variable.
 
 ## Data Model
 
-Firebase stores tasks below the `/tasks` collection. A record has the following shape:
+Firebase stores tasks below `users/{uid}/tasks/{taskId}`. A record has the following shape:
 
 ```json
 {
@@ -85,14 +108,14 @@ Firebase generates the task identifier. The client uses that identifier for upda
 
 ## Request Lifecycle
 
-| Action | Method | Endpoint |
+| Action | SDK operation | Path |
 | --- | --- | --- |
-| Load tasks | `GET` | `/tasks.json` |
-| Create a task | `POST` | `/tasks.json` |
-| Change completion state | `PATCH` | `/tasks/{id}.json` |
-| Delete a task | `DELETE` | `/tasks/{id}.json` |
+| Load tasks | `get` | `users/{uid}/tasks` |
+| Create a task | `push` + `set` | `users/{uid}/tasks/{id}` |
+| Change completion state | `update` | `users/{uid}/tasks/{id}` |
+| Delete a task | `remove` | `users/{uid}/tasks/{id}` |
 
-Requests time out after ten seconds. Responses pass through runtime validation before they enter application state.
+The SDK manages authenticated connections. Database rules deny anonymous and cross-user access, reject unknown fields and invalid task values, and allow owners to delete their own tasks. Responses also pass through client-side validation.
 
 ## Available Commands
 
@@ -103,6 +126,8 @@ Requests time out after ten seconds. Responses pass through runtime validation b
 | `npm start` | Serve the production build |
 | `npm run lint` | Run ESLint |
 | `npm test` | Run data parsing and validation tests |
+| `npm run test:firebase` | Run authentication, SDK CRUD, and access-rule integration tests in local emulators |
+| `npm run emulators` | Start local authentication and database emulators |
 | `npm run typecheck` | Validate the project with the TypeScript 7 native compiler |
 | `npm run check` | Run lint, tests, type-checking, and the production build |
 
@@ -120,6 +145,7 @@ Run the complete quality gate before opening a pull request:
 
 ```bash
 npm run check
+npm run test:firebase
 ```
 
 ## Project Structure
@@ -129,7 +155,8 @@ src/
 ├── app/
 │   ├── components/       Form, list, item, and reusable section UI
 │   ├── lib/
-│   │   ├── task-api.ts   Firebase requests and timeout handling
+│   │   ├── firebase.ts   Auth, database, and emulator configuration
+│   │   ├── task-api.ts   Authenticated user-scoped task operations
 │   │   ├── task-data.ts  Normalization and runtime parsing
 │   │   └── task-data.test.ts
 │   ├── globals.css       Theme and responsive page layout

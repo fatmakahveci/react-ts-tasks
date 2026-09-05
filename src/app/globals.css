@@ -12,6 +12,13 @@
   --font-heading: "Avenir Next", "Segoe UI", var(--font-body);
 }
 
+.account-bar { max-width: 720px; margin: 1rem auto; padding: 0 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+.account-bar span { overflow-wrap: anywhere; }
+.auth-form { display: grid; gap: .8rem; padding: 1.5rem; border-radius: 22px; background: var(--paper); }
+.auth-form input { min-width: 0; padding: .8rem; border: 1px solid var(--line); border-radius: 10px; }
+.auth-form button, .account-bar button { padding: .8rem 1rem; border: 0; border-radius: 10px; background: var(--green); color: white; }
+.auth-form [role="alert"] { color: var(--danger); }
+
 * {
   box-sizing: border-box;
 }

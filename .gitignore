@@ -34,3 +34,5 @@ next-env.d.ts
 
 .swc/
 .*.env
+*-debug.log
+.firebase/

@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { resolveTasksUrl } from './task-config.ts';
 import {
   normalizeTaskText,
   parseCreatedTaskId,
@@ -66,34 +65,5 @@ describe('parseCreatedTaskId', () => {
 
   it('rejects an invalid ID', () => {
     assert.throws(() => parseCreatedTaskId({ name: '' }), /valid ID/);
-  });
-});
-
-describe('resolveTasksUrl', () => {
-  it('normalizes a valid Firebase collection URL', () => {
-    assert.equal(
-      resolveTasksUrl(' https://example-default-rtdb.firebaseio.com/tasks.json/ '),
-      'https://example-default-rtdb.firebaseio.com/tasks.json',
-    );
-  });
-
-  it('accepts HTTP only for local emulators', () => {
-    assert.equal(
-      resolveTasksUrl('http://127.0.0.1:9000/tasks.json'),
-      'http://127.0.0.1:9000/tasks.json',
-    );
-    assert.throws(
-      () => resolveTasksUrl('http://example.com/tasks.json'),
-      /must use HTTPS/,
-    );
-  });
-
-  it('rejects missing, malformed, and incorrectly scoped URLs', () => {
-    assert.throws(() => resolveTasksUrl(''), /not configured/);
-    assert.throws(() => resolveTasksUrl('not-a-url'), /valid URL/);
-    assert.throws(
-      () => resolveTasksUrl('https://example.com/other.json'),
-      /must end with \/tasks.json/,
-    );
   });
 });
